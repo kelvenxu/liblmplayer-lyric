@@ -98,11 +98,11 @@ lmplayer_lyric_downloader_class_init (LmplayerLyricDownloaderClass *self_class)
 }
 
 void
-lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const char *title, const char *artist)
+lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const char *title, const char *artist, const char *output)
 {
 	LmplayerLyricDownloaderClass *self_class = LMPLAYER_LYRIC_DOWNLOADER_GET_CLASS(downloader);
 	if(self_class->download)
-		self_class->download(downloader, title, artist);
+		self_class->download(downloader, title, artist, output);
 	//g_print("empty start to download lyric\n");
 }
 

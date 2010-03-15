@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
 
 	LmplayerLyricDownloader *lyric_downloader = g_object_new(LMPLAYER_TYPE_LYRIC_DOWNLOADER_TT, NULL);
 
-	lmplayer_lyric_downloader_download(lyric_downloader, "a", "b");
+	lmplayer_lyric_downloader_download(lyric_downloader, "a", "b", "c");
 #if 0
 	context = g_option_context_new("- download lyric");
 	g_option_context_add_main_entries(context, options, NULL);

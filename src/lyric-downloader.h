@@ -49,14 +49,14 @@ typedef struct
 {
 	GObjectClass parent;
 
-	void (*download) (LmplayerLyricDownloader *downloader, const char *title, const char *artist);
+	void (*download) (LmplayerLyricDownloader *downloader, const char *title, const char *artist, const char *output);
 	void (*download_finished) ();
 	void (*download_failed) ();
 } LmplayerLyricDownloaderClass;
 
 GType lmplayer_lyric_downloader_get_type(void);
 
-void lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const char *title, const char *artist);
+void lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const char *title, const char *artist, const char *output);
 G_END_DECLS
 
 #endif /*__LYRIC_DOWNLOADER_H__ */

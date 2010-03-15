@@ -50,7 +50,7 @@ struct _LmplayerLyricDownloaderTTPrivate
 	int placehold;
 };
 
-static void tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist);
+static void tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *output);
 
 static void
 lmplayer_lyric_downloader_tt_dispose (LmplayerLyricDownloaderTT *self)
@@ -85,7 +85,7 @@ lmplayer_lyric_downloader_tt_class_init (LmplayerLyricDownloaderTTClass *self_cl
 }
 
 static void
-tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist)
+tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *output)
 {
 	g_print("really start to download tt lyric\n");
 }
