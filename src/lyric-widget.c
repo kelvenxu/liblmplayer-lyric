@@ -1,8 +1,8 @@
 /* vi: set sw=4 ts=4: */
 /*
- * skinlyric.c
+ * lyric-widget.c
  *
- * This file is part of libskin.
+ * This file is part of liblmplayer-lyric.
  *
  * Copyright (C) 2008 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -22,7 +22,7 @@
  * Boston, MA 02111-1307, USA.
  * */
 
-#include "skinlyric.h"
+#include "lyric-widget.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

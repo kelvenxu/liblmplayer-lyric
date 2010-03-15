@@ -2,7 +2,7 @@
 /*
  * lyric-downloader.h
  *
- * This file is part of ________.
+ * This file is part of liblmplayer-lyric.
  *
  * Copyright (C) 2010 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -29,12 +29,12 @@
 
 G_BEGIN_DECLS
 
-#define LMPLAYER_LYRIC_DOWNLOADER_TYPE (lmplayer_lyric_downloader_get_type())
-#define LMPLAYER_LYRIC_DOWNLOADER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), LMPLAYER_LYRIC_DOWNLOADER_TYPE, LmplayerLyricDownloader))
-#define LMPLAYER_LYRIC_DOWNLOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), LMPLAYER_LYRIC_DOWNLOADER_TYPE, LmplayerLyricDownloaderClass))
-#define LMPLAYER_IS_LYRIC_DOWNLOADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), LMPLAYER_LYRIC_DOWNLOADER_TYPE))
-#define LMPLAYER_IS_LYRIC_DOWNLOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), LMPLAYER_LYRIC_DOWNLOADER_TYPE))
-#define LMPLAYER_LYRIC_DOWNLOADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), LMPLAYER_LYRIC_DOWNLOADER_TYPE, LmplayerLyricDownloaderClass))
+#define LMPLAYER_TYPE_LYRIC_DOWNLOADER (lmplayer_lyric_downloader_get_type())
+#define LMPLAYER_LYRIC_DOWNLOADER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), LMPLAYER_TYPE_LYRIC_DOWNLOADER, LmplayerLyricDownloader))
+#define LMPLAYER_LYRIC_DOWNLOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), LMPLAYER_TYPE_LYRIC_DOWNLOADER, LmplayerLyricDownloaderClass))
+#define LMPLAYER_IS_LYRIC_DOWNLOADER(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), LMPLAYER_TYPE_LYRIC_DOWNLOADER))
+#define LMPLAYER_IS_LYRIC_DOWNLOADER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), LMPLAYER_TYPE_LYRIC_DOWNLOADER))
+#define LMPLAYER_LYRIC_DOWNLOADER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), LMPLAYER_TYPE_LYRIC_DOWNLOADER, LmplayerLyricDownloaderClass))
 
 typedef struct _LmplayerLyricDownloaderPrivate LmplayerLyricDownloaderPrivate;
 
@@ -50,6 +50,8 @@ typedef struct
 	GObjectClass parent;
 } LmplayerLyricDownloaderClass;
 
+GType lmplayer_lyric_downloader_get_type(void);
 
 G_END_DECLS
+
 #endif /*__LYRIC_DOWNLOADER_H__ */

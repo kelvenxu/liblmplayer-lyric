@@ -2,7 +2,7 @@
 /*
  * lyric-downloader.c
  *
- * This file is part of ________.
+ * This file is part of liblmplayer-lyric.
  *
  * Copyright (C) 2010 - kelvenxu <kelvenxu@gmail.com>.
  *
@@ -24,10 +24,10 @@
 
 #include "lyric-downloader.h"
 
-G_DEFINE_TYPE (LmplayerLyricDownloader, lmplayer_lyric_downloader, G_TYPE_OBJECT);
+G_DEFINE_TYPE (LmplayerLyricDownloader, lmplayer_lyric_downloader, G_TYPE_OBJECT)
 
 #define LMPLAYER_LYRIC_DOWNLOADER_GET_PRIVATE(o)\
-	(G_TYPE_INSTANCE_GET_PRIVATE ((o), LMPLAYER_LYRIC_DOWNLOADER_TYPE, LmplayerLyricDownloaderPrivate))
+	(G_TYPE_INSTANCE_GET_PRIVATE ((o), LMPLAYER_TYPE_LYRIC_DOWNLOADER, LmplayerLyricDownloaderPrivate))
 
 struct _LmplayerLyricDownloaderPrivate 
 {
@@ -46,7 +46,7 @@ lmplayer_lyric_downloader_finalize (LmplayerLyricDownloader *self)
 }
 
 static void
-lmplayer_lyric_downloader_init (LmplayerLyricDownloader *self)
+lmplayer_lyric_downloader_init(LmplayerLyricDownloader *self)
 {
 	LmplayerLyricDownloaderPrivate *priv;
 
