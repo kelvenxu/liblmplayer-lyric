@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: liblmplayer-lyric
+Description: Lmplayer lyric module.
+Version: @VERSION@
+Libs: -L${libdir} -llmplayer-lyric -lm @PACKAGE_LIBS@
+Cflags: -I${includedir}/liblmplayer-lyric @PACKAGE_CFLAGS@
+
+
