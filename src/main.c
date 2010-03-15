@@ -240,6 +240,10 @@ int main(int argc, char *argv[])
 
 	gtk_init(&argc, &argv);
 
+	LmplayerLyricDownloader *lyric_downloader = g_object_new(LMPLAYER_TYPE_LYRIC_DOWNLOADER_TT, NULL);
+
+	lmplayer_lyric_downloader_download(lyric_downloader, "a", "b");
+#if 0
 	context = g_option_context_new("- download lyric");
 	g_option_context_add_main_entries(context, options, NULL);
 	g_option_context_add_group(context, gtk_get_option_group(TRUE));
@@ -260,7 +264,7 @@ int main(int argc, char *argv[])
 	GSList *list = NULL;
 
 	//FIXME:
-	g_timeout_add_seconds(24, timeout_quit, NULL);
+	g_timeout_add_seconds(24, (GSourceFunc)timeout_quit, NULL);
 
 	gchar *xml = tt_get_lyrics_list(opt.artist, opt.title);
 	if(xml == NULL)
@@ -293,6 +297,7 @@ int main(int argc, char *argv[])
 
 	g_slist_foreach(list, (GFunc)g_free, NULL);
 	g_slist_free(list);
+#endif
 	return 0;
 }
 #if 0

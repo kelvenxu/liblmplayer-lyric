@@ -45,9 +45,12 @@ G_DEFINE_TYPE (LmplayerLyricDownloaderTT, lmplayer_lyric_downloader_tt, LMPLAYER
 #define LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(o)\
 	(G_TYPE_INSTANCE_GET_PRIVATE ((o), LMPLAYER_TYPE_LYRIC_DOWNLOADER_TT, LmplayerLyricDownloaderTTPrivate))
 
-struct _LmplayerLyricDownloaderTTPrivate {
+struct _LmplayerLyricDownloaderTTPrivate 
+{
+	int placehold;
 };
 
+static void tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist);
 
 static void
 lmplayer_lyric_downloader_tt_dispose (LmplayerLyricDownloaderTT *self)
@@ -75,8 +78,17 @@ lmplayer_lyric_downloader_tt_class_init (LmplayerLyricDownloaderTTClass *self_cl
 	g_type_class_add_private (self_class, sizeof (LmplayerLyricDownloaderTTPrivate));
 	object_class->dispose = (void (*) (GObject *object)) lmplayer_lyric_downloader_tt_dispose;
 	object_class->finalize = (void (*) (GObject *object)) lmplayer_lyric_downloader_tt_finalize;
+
+	LmplayerLyricDownloaderClass *parent_class = LMPLAYER_LYRIC_DOWNLOADER_CLASS(self_class);
+	
+	parent_class->download = tt_lyric_download;
 }
 
+static void
+tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist)
+{
+	g_print("really start to download tt lyric\n");
+}
 
 static gchar* 
 tt_http_request(char* url)

@@ -34,6 +34,13 @@ struct _LmplayerLyricDownloaderPrivate
 	int i;
 };
 
+enum {
+	DOWNLOAD_FINISHED,
+	DOWNLOAD_FAILED,
+	LAST_SIGNAL
+};
+
+static guint signals[LAST_SIGNAL] = { 0 };
 
 static void
 lmplayer_lyric_downloader_dispose (LmplayerLyricDownloader *self)
@@ -61,5 +68,41 @@ lmplayer_lyric_downloader_class_init (LmplayerLyricDownloaderClass *self_class)
 	g_type_class_add_private (self_class, sizeof (LmplayerLyricDownloaderPrivate));
 	object_class->dispose = (void (*) (GObject *object)) lmplayer_lyric_downloader_dispose;
 	object_class->finalize = (void (*) (GObject *object)) lmplayer_lyric_downloader_finalize;
+
+	self_class->download = (void (*)) lmplayer_lyric_downloader_download;
+
+	self_class->download_finished = NULL;
+	self_class->download_failed = NULL;
+
+  signals[DOWNLOAD_FINISHED] = g_signal_new(
+			"download_finished",
+		  G_TYPE_FROM_CLASS(object_class),
+		  G_SIGNAL_RUN_FIRST,
+		  G_STRUCT_OFFSET(LmplayerLyricDownloaderClass, download_finished),
+		  NULL, 
+			NULL,
+		  g_cclosure_marshal_VOID__VOID,
+		  G_TYPE_NONE, 
+			0);
+
+  signals[DOWNLOAD_FAILED] = g_signal_new(
+			"download_failed",
+		  G_TYPE_FROM_CLASS(object_class),
+		  G_SIGNAL_RUN_FIRST,
+		  G_STRUCT_OFFSET(LmplayerLyricDownloaderClass, download_failed),
+		  NULL, 
+			NULL,
+		  g_cclosure_marshal_VOID__VOID,
+		  G_TYPE_NONE, 
+			0);
+}
+
+void
+lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const char *title, const char *artist)
+{
+	LmplayerLyricDownloaderClass *self_class = LMPLAYER_LYRIC_DOWNLOADER_GET_CLASS(downloader);
+	if(self_class->download)
+		self_class->download(downloader, title, artist);
+	//g_print("empty start to download lyric\n");
 }
 
