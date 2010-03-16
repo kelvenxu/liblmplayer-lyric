@@ -70,6 +70,7 @@ lmplayer_lyric_downloader_class_init (LmplayerLyricDownloaderClass *self_class)
 	object_class->finalize = (void (*) (GObject *object)) lmplayer_lyric_downloader_finalize;
 
 	self_class->download = (void (*)) lmplayer_lyric_downloader_download;
+	self_class->get_list = (void (*)) lmplayer_lyric_downloader_get_list;
 
 	self_class->download_finished = NULL;
 	self_class->download_failed = NULL;
@@ -105,4 +106,13 @@ lmplayer_lyric_downloader_download(LmplayerLyricDownloader *downloader, const ch
 		self_class->download(downloader, title, artist, output);
 	//g_print("empty start to download lyric\n");
 }
+
+GSList *
+lmplayer_lyric_downloader_get_list(LmplayerLyricDownloader *downloader, const char *title, const char *artist)
+{
+	LmplayerLyricDownloaderClass *self_class = LMPLAYER_LYRIC_DOWNLOADER_GET_CLASS(downloader);
+	if(self_class->get_list)
+		self_class->get_list(downloader, title, artist);
+}
+
 

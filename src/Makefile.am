@@ -10,7 +10,9 @@ headers = \
 	lmp_debug.h\
 	lyric-downloader.h\
 	lyric-widget.h\
-	tt_codefunc.h
+	lyric-selection-dialog.h\
+	tt_codefunc.h\
+	tt_lyric.h
 
 sources = \
 	http_error_codes.c\
@@ -18,7 +20,9 @@ sources = \
 	lmp_debug.c\
 	lyric-downloader.c\
 	lyric-widget.c\
-	tt_codefunc.c
+	lyric-selection-dialog.c\
+	tt_codefunc.c\
+	tt_lyric.c
 
 headers += lyric-downloader-tt.h
 sources += lyric-downloader-tt.c
