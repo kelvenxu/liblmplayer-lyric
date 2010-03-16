@@ -31,7 +31,6 @@ typedef struct _LyricId
 	char *id;
 	char *artist;
 	char *title;
-	char *filename;
 } LyricId;
 
 typedef struct _LyricId TTLyric;

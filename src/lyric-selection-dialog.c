@@ -25,6 +25,7 @@
 #include "lyric-selection-dialog.h"
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include "tt_lyric.h"
 
 
 G_DEFINE_TYPE (LmplayerLyricSelectionDialog, lmplayer_lyric_selection_dialog, GTK_TYPE_DIALOG)
@@ -40,6 +41,8 @@ struct _LmplayerLyricSelectionDialogPrivate
 
 	GList *btn_list;
 	gint id;
+
+	GSList *lyrics_list;
 };
 
 static void
@@ -67,11 +70,15 @@ lmplayer_lyric_selection_dialog_init(LmplayerLyricSelectionDialog *self)
 	LmplayerLyricSelectionDialogPrivate *priv;
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE (self);
+
 	priv->container = NULL;
 	priv->widget = NULL;
 	priv->first_btn = NULL;
+
 	priv->btn_list = NULL;
 	priv->id = 0;
+
+	priv->lyrics_list = NULL;
 }
 
 static void
@@ -160,31 +167,38 @@ radio_button_toggled_cb(GtkToggleButton *button, LmplayerLyricSelectionDialog *d
 }
 
 static void
-create_radio_button_and_pack(const char* label, LmplayerLyricSelectionDialog *dlg)
+create_radio_button_and_pack(TTLyric *lyric, LmplayerLyricSelectionDialog *dlg)
 {
 	LmplayerLyricSelectionDialogPrivate *priv;
 
-	g_return_if_fail(label && dlg);
+	g_return_if_fail(lyric && dlg);
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
+	g_print("create and pack\n");
 	GtkWidget *btn = NULL;
 	if(priv->first_btn)
 	{
-		btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(priv->first_btn), label);
+		btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(priv->first_btn), lyric->title);
 	}
 	else
 	{
-		priv->first_btn = gtk_radio_button_new_with_label(NULL, label);
+		priv->first_btn = gtk_radio_button_new_with_label(NULL, lyric->title);
 		btn = priv->first_btn;
 	}
 
 	gtk_box_pack_start(GTK_BOX(priv->widget), btn, FALSE, FALSE, 6);
 	g_signal_connect(btn, "toggled", G_CALLBACK(radio_button_toggled_cb), dlg);
 
+
+	g_print("create and pack 1\n");
 	priv->btn_list = g_list_append(priv->btn_list, btn);
+	g_print("create and pack end\n");
 }
 
+/*
+ * Note: list is TTLyric list
+ */
 void
 lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSList *list)
 {
@@ -194,6 +208,7 @@ lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSLi
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
+	g_print("set list start\n");
 	if(GTK_IS_WIDGET(priv->widget))
 	{
 		gtk_widget_destroy(priv->widget);
@@ -208,10 +223,15 @@ lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSLi
 		priv->btn_list = NULL;
 	}
 
+	g_print("widget new\n");
 	priv->widget = gtk_vbox_new(FALSE, 6);
+
+	priv->lyrics_list = list;
 
 	g_slist_foreach(list, (GFunc)create_radio_button_and_pack, dlg);
 	gtk_box_pack_start(GTK_BOX(priv->container), priv->widget, FALSE, FALSE, 6);
+
+	g_print("set list end\n");
 }
 
 gint
@@ -223,5 +243,11 @@ lmplayer_lyric_selection_dialog_get_selected_id(LmplayerLyricSelectionDialog *dl
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
-	return priv->id;
+	const TTLyric *lyric = (TTLyric *)g_slist_nth_data(priv->lyrics_list, priv->id);
+
+	if(lyric)
+		return atoi(lyric->id);
+	else
+		return -1;
 }
+

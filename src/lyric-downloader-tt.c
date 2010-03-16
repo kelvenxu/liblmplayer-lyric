@@ -28,6 +28,7 @@
 #include <gtk/gtk.h>
 #include "lyric-downloader-tt.h"
 #include "tt_lyric.h"
+#include "lyric-selection-dialog.h"
 
 G_DEFINE_TYPE (LmplayerLyricDownloaderTT, lmplayer_lyric_downloader_tt, LMPLAYER_TYPE_LYRIC_DOWNLOADER)
 
@@ -36,11 +37,19 @@ G_DEFINE_TYPE (LmplayerLyricDownloaderTT, lmplayer_lyric_downloader_tt, LMPLAYER
 
 struct _LmplayerLyricDownloaderTTPrivate 
 {
-	int placehold;
+	GtkWidget *dlg;
+
+	guint id;
+	gchar *artist;
+	gchar *title;
+	gchar *filename;
 };
 
 static void tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *output);
 static GSList * tt_lyric_get_list(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist);
+static void dialog_response_cb(GtkDialog *dialog, gint response_id, LmplayerLyricDownloader *downloader);
+static void tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader);
+static void tt_lyric_download_func(LmplayerLyricDownloaderTT *downloader);
 
 static void
 lmplayer_lyric_downloader_tt_dispose (LmplayerLyricDownloaderTT *self)
@@ -58,10 +67,20 @@ lmplayer_lyric_downloader_tt_init (LmplayerLyricDownloaderTT *self)
 	LmplayerLyricDownloaderTTPrivate *priv;
 
 	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE (self);
+	priv->dlg = (GtkWidget *)lmplayer_lyric_selection_dialog_new();
+
+	gtk_widget_realize(priv->dlg);
+
+	g_signal_connect(priv->dlg, "response", G_CALLBACK(dialog_response_cb), self);
+
+	priv->id = 0;
+	priv->artist = NULL;
+	priv->title = NULL;
+	priv->filename = NULL;
 }
 
 static void
-lmplayer_lyric_downloader_tt_class_init (LmplayerLyricDownloaderTTClass *self_class)
+lmplayer_lyric_downloader_tt_class_init(LmplayerLyricDownloaderTTClass *self_class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (self_class);
 
@@ -76,9 +95,34 @@ lmplayer_lyric_downloader_tt_class_init (LmplayerLyricDownloaderTTClass *self_cl
 }
 
 static void
-tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *output)
+tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *filename)
 {
-	g_print("really start to download tt lyric\n");
+	LmplayerLyricDownloaderTTPrivate *priv;
+
+	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
+
+	if(priv->title)
+	{
+		g_free(priv->title);
+	}
+
+	priv->title = g_strdup(title);
+
+	if(priv->artist)
+	{
+		g_free(priv->artist);
+	}
+
+	priv->artist = g_strdup(artist);
+
+	if(priv->filename)
+	{
+		g_free(priv->filename);
+	}
+
+	priv->filename = g_strdup(filename);
+
+	g_thread_create((GThreadFunc)tt_lyric_get_list_func, downloader, FALSE, NULL);
 }
 
 static GSList *
@@ -87,34 +131,92 @@ tt_lyric_get_list(LmplayerLyricDownloaderTT *downloader, const char *title, cons
 }
 
 static void
-tt_lyric_download_func(TTLyric *lyric)
+tt_lyric_download_func(LmplayerLyricDownloaderTT *downloader)
 {
 	gboolean ret;
-	ret = tt_get_lyric_content_and_save(lyric->id, lyric->artist, lyric->title, lyric->filename);
+	LmplayerLyricDownloaderTTPrivate *priv;
+
+	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
+
+	g_print("download: %d. %s %s\n", priv->id, priv->artist, priv->title);
+	ret = tt_get_lyrics_content_and_save(priv->id, priv->artist, priv->title, priv->filename);
 	if(ret)
 	{
+		g_print("emit signal\n");
 		// emit signal
+		g_signal_emit_by_name(downloader, "download_finished", NULL);
+		g_print("emit signal done\n");
 	}
 }
 
 static void
-tt_lyric_get_list_func(TTLyric *lyric)
+tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 {
+#if 0
+	GtkWidget *dialog = gtk_message_dialog_new (NULL,
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_CLOSE,
+			"thread dialog",
+			NULL);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+#endif
+
 	GSList *list = NULL;
-	gchar *xml = tt_get_lyric_list(lyric->artist, lyric->title);
-	if(xml)
+	LmplayerLyricDownloaderTTPrivate *priv;
+
+	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
+
+	g_print("download: %s - %s\n", priv->artist, priv->title);
+
+	gchar *xml = tt_get_lyrics_list(priv->artist, priv->title);
+	if(!xml)
 	{
-		list = tt_parse_lyricslist(xml);
-		if(list)
-		{
-			// emit signal
-		}
-		else
-		{
-		}
+		g_print("xml is NULL\n");
+		return;
 	}
 
-	// failed
+	g_print("xml: %s\n", xml);
+	list = tt_parse_lyricslist(xml);
+	if(!list)
+	{
+		g_print("list is NULL\n");
+		return;
+	}
+
+	if(g_slist_length(list) > 1)
+	{
+		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), list);
+
+		g_print("show it\n");
+		gtk_widget_show_all(priv->dlg);
+
+		g_print("show !\n");
+		return;
+	}
+
+	TTLyric *lyric = (TTLyric *)list->data;
+	priv->id = atoi(lyric->id);
+
+	tt_lyric_download_func(downloader);
 }
 
+static void
+dialog_response_cb(GtkDialog *dialog, gint response_id, LmplayerLyricDownloader *downloader)
+{
+	LmplayerLyricDownloaderTTPrivate *priv;
+
+	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
+
+	if(response_id == GTK_RESPONSE_ACCEPT)
+	{
+		g_print("responsed\n");
+		priv->id = lmplayer_lyric_selection_dialog_get_selected_id(LMPLAYER_LYRIC_SELECTION_DIALOG(dialog));
+		
+		g_print("id: %d\n", priv->id);
+		g_thread_create((GThreadFunc)tt_lyric_download_func, downloader, FALSE, NULL);
+	}
+
+	gtk_widget_hide(GTK_WIDGET(dialog));
+}
 

@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lyric-downloader-tt.h"
+#include "lyric-downloader.h"
 #include "tt_lyric.h"
 #include "lyric-selection-dialog.h"
 
@@ -303,160 +304,84 @@ int main(int argc, char *argv[])
 	return 0;
 }
 #endif
+ 
+struct MusicList
+{
+	char *title;
+	char *artist;
+} music_list[] = {
 #if 0
-
-/* vi: set sw=4 ts=4: */
-/*
-* main.c
-*
-* This file is part of liblmplayer-lyric.
-*
-* Copyright (C) 2010 - kelvenxu <kelvenxu@gmail.com>.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330,
-* Boston, MA 02111-1307, USA.
-* */
- 
-#include <gtk/gtk.h>
- 
-static GtkWidget *list_vbox = NULL;
-static GtkWidget *child = NULL;
-static GtkWidget *dialog = NULL;
-static GSList *group = NULL;
-static GtkWidget *first_btn = NULL;
-static gint selected_id = 0;
- 
-static void
-dialog_response_cb(GtkDialog *dialog, gint response_id, gpointer user_data)
-{
-if(response_id == GTK_RESPONSE_ACCEPT)
-{
-g_print("accept\n");
-gtk_widget_hide(GTK_WIDGET(dialog));
-}
-}
- 
-GtkWidget *
-dialog_setup()
-{
-dialog = gtk_dialog_new_with_buttons("My dialog",
-NULL,
-GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-GTK_STOCK_OK,
-GTK_RESPONSE_ACCEPT,
-GTK_STOCK_CANCEL,
-GTK_RESPONSE_REJECT,
-NULL);
- 
-GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
- 
-GtkWidget *label = gtk_label_new("Select item below for download:");
-gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 6);
- 
-GtkWidget *hbox1 = gtk_hbox_new(FALSE, 6);
-GtkWidget *placehold = gtk_label_new(" ");
-gtk_box_pack_start(GTK_BOX(hbox1), placehold, FALSE, FALSE, 0);
-list_vbox = gtk_vbox_new(FALSE, 6);
-gtk_box_pack_start(GTK_BOX(hbox1), list_vbox, FALSE, FALSE, 0);
- 
-gtk_box_pack_start(GTK_BOX(vbox), hbox1, FALSE, FALSE, 0);
- 
-gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, FALSE, FALSE, 6);
- 
-g_signal_connect(dialog, "response", G_CALLBACK(dialog_response_cb), NULL);
-g_signal_connect(dialog, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
-}
- 
-static void
-list_toggled_cb(GtkToggleButton *button, gpointer *user_data)
-{
-}
- 
-static void
-create_radio_button_and_pack(const char* label, GtkWidget *box)
-{
-GtkWidget *btn = NULL;
-if(first_btn)
-{
-btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(first_btn), label);
-}
-else
-{
-first_btn = gtk_radio_button_new_with_label(NULL, label);
-btn = first_btn;
-}
- 
-gtk_box_pack_start(GTK_BOX(box), btn, FALSE, FALSE, 6);
-g_signal_connect(btn, "toggled", G_CALLBACK(list_toggled_cb), NULL);
-}
- 
-static void
-list_setup(GSList *list)
-{
-if(GTK_IS_WIDGET(child))
-{
-gtk_widget_destroy(child);
-child = NULL;
-first_btn = NULL;
-}
- 
-child = gtk_vbox_new(FALSE, 6);
- 
-g_slist_foreach(list, (GFunc)create_radio_button_and_pack, child);
- 
-gtk_box_pack_start(GTK_BOX(list_vbox), child, FALSE, FALSE, 6);
-}
+	{"不只有缘", 	"张学友"}, 	
+	{"幸福糖", 	"王澜霏"}, 	
+	{"把我的爱放在你手...", 	"林耿贤"}, 	
+	{"一直看见天使", 	"容祖儿"}, 	
+	{"恋上你背面", 	"张学友"}, 	
+	{"恋爱涟漪", 	"林一峰"}, 	
+	{"无缘", 	"范逸臣"}, 	
 #endif
- 
+	{"生理时钟", 	"罗志祥"}, 	
+	{"热辣辣", 	"张学友"}, 	
+	{"新鲜爱", 	"周楚霏"},
+	{"花甲", 	"后弦"}, 	
+	{"爱,复活", 	"李小璐"}, 	
+	{"你还欠我一个拥抱", 	"后弦"}, 	
+	{"天亮后分手", 	"尚雯婕"}, 	
+	{"谜", 	"陈坤"}, 	
+	{"罗生门", 	"罗志祥"}, 	
+	{"easy", 	"彭坦"}, 	
+	{"幽兰操", 	"王菲"}, 	
+	{"最初", 	"赵传"}, 	
+	{"如梦令", 	"蔡琴"},
+	{"背对背拥抱", 	"林俊杰"}, 	
+	{"心电心", 	"王心凌"}, 	
+	{"大家一起喜羊羊", 	"周笔畅"}, 	
+	{"无尽透明的思念", 	"庾澄庆"}, 	
+	{"娃娃脸", 	"后弦"}, 	
+	{"新的家", 	"曾轶可"}, 	
+	{"哥哥", 	"常石磊"}, 	
+	{"第几个100天", 	"林俊杰"}, 	
+	{"答案", 	"沙宝亮"}, 	
+	{"故乡山川", 	"李健"},
+	{0, 0}
+};
+
 static gboolean
-timer_cb(GtkWidget *dlg)
+timer_cb(LmplayerLyricDownloader *lyric_downloader)
 {
 	static int i = 0;
-	GSList *list = NULL;
+	if(!music_list[i].title)
+		return FALSE;
 
-	gchar buf[64];
+	g_print("start to donwload: %d\n", i);
+	gchar *filename = g_strdup_printf("/tmp/%d.txt", i);
+	lmplayer_lyric_downloader_download(lyric_downloader, music_list[i].title, music_list[i].artist, filename);
 
-	sprintf(buf, "item %d", i++);
-	list = g_slist_append(list, g_strdup(buf));
-
-	sprintf(buf, "item %d", i++);
-	list = g_slist_append(list, g_strdup(buf));
-
-	sprintf(buf, "item %d", i++);
-	list = g_slist_append(list, g_strdup(buf));
-
-	lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(dlg), list);
-	g_slist_foreach(list, (GFunc)g_free, NULL);
-	g_slist_free(list);
-
-	gtk_widget_show_all(dlg);
+	g_free(filename);
+	++i;
 	return TRUE;
 }
- 
-int main()
-{
-	gtk_init(NULL, NULL);
- 
-	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
- 
-	GtkWidget *dlg = lmplayer_lyric_selection_dialog_new();
 
-	g_timeout_add(2000, (GSourceFunc)timer_cb, dlg);
- 
-	g_signal_connect(win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	gtk_widget_show(win);
- 
-	gtk_main();
+download_finished_cb(LmplayerLyricDownloader *downloader, gpointer user_data)
+{
+	g_print("download finished\n");
 }
+
+int main(int argc, char *argv[])
+{
+	gtk_init(&argc, &argv);
+	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+	g_thread_init(NULL);
+
+	LmplayerLyricDownloader *lyric_downloader = g_object_new(LMPLAYER_TYPE_LYRIC_DOWNLOADER_TT, NULL);
+
+	g_signal_connect(lyric_downloader, "download_finished", G_CALLBACK(download_finished_cb), NULL);
+	g_timeout_add_seconds(5, timer_cb, lyric_downloader);
+
+	gtk_widget_show_all(win);
+
+	gtk_main();
+
+	return 0;
+};
+
