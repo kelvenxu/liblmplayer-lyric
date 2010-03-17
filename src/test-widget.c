@@ -36,7 +36,8 @@ timer_cb(SkinLyric *lyric_widget)
 {
 	static int i = 0;
 
-	skin_lyric_set_current_second(lyric_widget, i * TICKS);
+	skin_lyric_set_current_second(lyric_widget, i * TICKS / 1000);
+
 	++i;
 	return TRUE;
 }
@@ -46,15 +47,14 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	
-	GtkWidget *lyric_widget = skin_lyric_new();
+	GtkWidget *lyric_widget = (GtkWidget *)skin_lyric_new();
 
-	gtk_widget_realize(lyric_widget);
-	skin_lyric_add_file(lyric_widget, "test.lrc");
 	skin_lyric_set_size(lyric_widget, 300, 500);
+	gtk_widget_show(lyric_widget);
 
 	gtk_container_add(GTK_CONTAINER(win), lyric_widget);
 
+	skin_lyric_add_file(lyric_widget, "test.lrc");
 	g_timeout_add(200, (GSourceFunc)timer_cb, lyric_widget);
 
 	gtk_widget_show_all(win);
