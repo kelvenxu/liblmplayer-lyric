@@ -1,4 +1,4 @@
-noinst_PROGRAMS = lmplayer-lyric-test
+noinst_PROGRAMS = test-downloader test-dialog test-widget
 lib_LTLIBRARIES = liblmplayer-lyric.la
 
 INCLUDES = -I$(top_srcdir) $(PACKAGE_CFLAGS)
@@ -29,12 +29,18 @@ sources += lyric-downloader-tt.c
 
 liblmplayer_lyric_la_SOURCES = $(sources) $(headers)
 liblmplayer_lyric_la_LIBADD = $(PACKAGE_LIBS)
-#liblmplayer_lyric_la_CPPFLAGS = $(CPPFLAGS) $(PACKAGE_CFLAGS) $(CFLAGS)
 liblmplayer_lyric_la_CFLAGS = -I$(top_srcdir) $(CFLAGS) $(PACKAGE_CFLAGS)
 
-lmplayer_lyric_test_SOURCES = main.c $(sources) $(headers)
-lmplayer_lyric_test_LDADD = $(PACKAGE_LIBS) $(top_builddir)/src/liblmplayer-lyric.la
-#lmplayer_lyric_test_CPPFLAGS = -I$(top_srcdir) $(CPPFLAGS) $(PACKAGE_CFLAGS)
-lmplayer_lyric_test_CFLAGS = -I$(top_srcdir) $(CFLAGS) $(PACKAGE_CFLAGS)
+test_downloader_SOURCES = test-downloader.c
+test_downloader_LDADD = $(PACKAGE_LIBS) $(top_builddir)/src/liblmplayer-lyric.la
+test_downloader_CFLAGS = -I$(top_srcdir) $(CFLAGS) $(PACKAGE_CFLAGS)
+
+test_dialog_SOURCES = test-dialog.c
+test_dialog_LDADD = $(PACKAGE_LIBS) $(top_builddir)/src/liblmplayer-lyric.la
+test_dialog_CFLAGS = -I$(top_srcdir) $(CFLAGS) $(PACKAGE_CFLAGS)
+
+test_widget_SOURCES = test-widget.c
+test_widget_LDADD = $(PACKAGE_LIBS) $(top_builddir)/src/liblmplayer-lyric.la
+test_widget_CFLAGS = -I$(top_srcdir) $(CFLAGS) $(PACKAGE_CFLAGS)
 
 
