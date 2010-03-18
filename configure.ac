@@ -1,4 +1,4 @@
-AC_INIT(src/main.c)
+AC_INIT(src/lyric-downloader.c)
 
 AM_CONFIG_HEADER(config.h)
 

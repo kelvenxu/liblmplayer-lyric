@@ -52,6 +52,18 @@ int main(int argc, char *argv[])
 	skin_lyric_set_size(lyric_widget, 300, 500);
 	gtk_widget_show(lyric_widget);
 
+	GtkStyle *style = gtk_widget_get_style(win);
+	
+	skin_lyric_set_bg_color(lyric_widget, &(style->bg[0]));
+	skin_lyric_set_text_color(lyric_widget, &(style->fg[0]));
+
+	GdkColor light;
+	light.red = 65535;
+	light.green = 0;
+	light.blue = 0;
+	//skin_lyric_set_highlight_color(lyric_widget, &(style->light[1]));
+	skin_lyric_set_highlight_color(lyric_widget, &light);
+
 	gtk_container_add(GTK_CONTAINER(win), lyric_widget);
 
 	skin_lyric_add_file(lyric_widget, "test.lrc");
