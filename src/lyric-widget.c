@@ -28,10 +28,10 @@
 #include <string.h>
 #include <glib/gstdio.h>
 
-G_DEFINE_TYPE (SkinLyric, skin_lyric, GTK_TYPE_LAYOUT); 
+G_DEFINE_TYPE (LmplayerLyricWidget, lmplayer_lyric_widget, GTK_TYPE_LAYOUT); 
 
-#define SKIN_LYRIC_GET_PRIVATE(o)\
-	(G_TYPE_INSTANCE_GET_PRIVATE ((o), SKIN_TYPE_LYRIC, SkinLyricPrivate))
+#define LMPLAYER_LYRIC_WIDGET_GET_PRIVATE(o)\
+	(G_TYPE_INSTANCE_GET_PRIVATE ((o), LMPLAYER_TYPE_LYRIC_WIDGET, LmplayerLyricWidgetPrivate))
 
 typedef struct LyricLine
 {
@@ -47,7 +47,7 @@ typedef struct LyricLine
 	gchar *text;
 } LyricLine;
 
-struct _SkinLyricPrivate 
+struct _LmplayerLyricWidgetPrivate 
 {
 	GtkWidget *alignment;
 	GtkWidget *da;
@@ -99,20 +99,20 @@ struct _SkinLyricPrivate
 
 
 static void
-skin_lyric_dispose (SkinLyric *self)
+lmplayer_lyric_widget_dispose (LmplayerLyricWidget *self)
 {
 }
 
 static void
-skin_lyric_finalize (SkinLyric *self)
+lmplayer_lyric_widget_finalize (LmplayerLyricWidget *self)
 {
 }
 
 static void
-skin_lyric_init (SkinLyric *self)
+lmplayer_lyric_widget_init (LmplayerLyricWidget *self)
 {
-	SkinLyricPrivate *priv;
-	priv = SKIN_LYRIC_GET_PRIVATE(self);
+	LmplayerLyricWidgetPrivate *priv;
+	priv = LMPLAYER_LYRIC_WIDGET_GET_PRIVATE(self);
 	self->priv = priv;
 
 	priv->alignment = NULL;
@@ -151,24 +151,24 @@ skin_lyric_init (SkinLyric *self)
 }
 
 static void
-skin_lyric_class_init (SkinLyricClass *self_class)
+lmplayer_lyric_widget_class_init (LmplayerLyricWidgetClass *self_class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (self_class);
 
-	g_type_class_add_private (self_class, sizeof (SkinLyricPrivate));
-	object_class->dispose = (void (*) (GObject *object)) skin_lyric_dispose;
-	object_class->finalize = (void (*) (GObject *object)) skin_lyric_finalize;
+	g_type_class_add_private (self_class, sizeof (LmplayerLyricWidgetPrivate));
+	object_class->dispose = (void (*) (GObject *object)) lmplayer_lyric_widget_dispose;
+	object_class->finalize = (void (*) (GObject *object)) lmplayer_lyric_widget_finalize;
 }
 
 static void 
-update_pixmap(SkinLyric *lyric)
+update_pixmap(LmplayerLyricWidget *lyric)
 {
 	GList *iter;
 	LyricLine *line;
 	GdkGC *gc;
 	PangoContext *context;
 	PangoLayout *layout;
-	SkinLyricPrivate *priv = lyric->priv;
+	LmplayerLyricWidgetPrivate *priv = lyric->priv;
 	gint n;
 
 	if(priv->loaded == FALSE)
@@ -232,9 +232,9 @@ update_pixmap(SkinLyric *lyric)
 }
 
 static gboolean
-layout_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
+layout_expose_cb(GtkWidget *widget, GdkEventExpose *event, LmplayerLyricWidget *lyric)
 {
-	SkinLyricPrivate *priv = lyric->priv;
+	LmplayerLyricWidgetPrivate *priv = lyric->priv;
 	GdkGC *gc;
 
 	gc = gdk_gc_new(GTK_LAYOUT(widget)->bin_window);
@@ -247,9 +247,9 @@ layout_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
 }
 
 static gboolean
-da_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
+da_expose_cb(GtkWidget *widget, GdkEventExpose *event, LmplayerLyricWidget *lyric)
 { 
-	SkinLyricPrivate *priv = lyric->priv;
+	LmplayerLyricWidgetPrivate *priv = lyric->priv;
 	
 	if(priv->da_gc == NULL)
 		priv->da_gc = gdk_gc_new(widget->window);
@@ -277,20 +277,20 @@ da_expose_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
 }
 
 static gboolean
-da_configure_cb(GtkWidget *widget, GdkEventExpose *event, SkinLyric *lyric)
+da_configure_cb(GtkWidget *widget, GdkEventExpose *event, LmplayerLyricWidget *lyric)
 {
 	g_print("da configure cb\n");
 	update_pixmap(lyric);
 	g_print("da configure cb done\n");
 }
 
-SkinLyric *
-skin_lyric_new()
+GtkWidget *
+lmplayer_lyric_widget_new()
 {
-	SkinLyric *lyric;
-	SkinLyricPrivate *priv;
+	LmplayerLyricWidget *lyric;
+	LmplayerLyricWidgetPrivate *priv;
 
-	lyric = g_object_new(SKIN_TYPE_LYRIC, NULL);
+	lyric = g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET, NULL);
 
 	priv = lyric->priv;
 	priv->alignment = gtk_alignment_new(0, 0, 1, 1);
@@ -312,21 +312,21 @@ skin_lyric_new()
 	g_signal_connect(G_OBJECT(priv->da), "expose-event", G_CALLBACK(da_expose_cb), lyric);
 	g_signal_connect(G_OBJECT(priv->da), "configure-event", G_CALLBACK(da_configure_cb), lyric);
 
-	return lyric;
+	return GTK_WIDGET(lyric);
 }
 
-void skin_lyric_get_size(SkinLyric *lyric, gint *width, gint *height)
+void lmplayer_lyric_widget_get_size(LmplayerLyricWidget *lyric, gint *width, gint *height)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 
 	*width = lyric->priv->da_width;
 	*height = lyric->priv->da_height;
 }
 
 void
-skin_lyric_set_size(SkinLyric *lyric, gint width, gint height)
+lmplayer_lyric_widget_set_size(LmplayerLyricWidget *lyric, gint width, gint height)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 
 	gtk_widget_set_size_request(GTK_WIDGET(lyric), width, height);
 	gtk_widget_set_size_request(lyric->priv->da, width, height);
@@ -375,7 +375,7 @@ str2time(const gchar* str, int* sec, int* msec)
 }
 
 static gboolean
-parse_lyric_line(SkinLyric *lyric, const gchar *line, gint line_no_)
+parse_lyric_line(LmplayerLyricWidget *lyric, const gchar *line, gint line_no_)
 {
 	char** p = NULL;
 	char* text = NULL;
@@ -383,7 +383,7 @@ parse_lyric_line(SkinLyric *lyric, const gchar *line, gint line_no_)
 	int old_sec = -1;
 	gboolean flag = FALSE;
 
-	SkinLyricPrivate *priv = lyric->priv;
+	LmplayerLyricWidgetPrivate *priv = lyric->priv;
 	char** parray = g_strsplit(line, "]", 5);
 
 	//find lyric text string
@@ -428,7 +428,7 @@ parse_lyric_line(SkinLyric *lyric, const gchar *line, gint line_no_)
 }
 
 static void
-update_xy_coordinate(SkinLyric *lyric)
+update_xy_coordinate(LmplayerLyricWidget *lyric)
 {
 	GList *iter;
 	LyricLine *line;
@@ -454,13 +454,13 @@ lyric_line_compare(LyricLine *line1, LyricLine *line2)
 }
 
 static gboolean
-parse_lyric_file_without_check(SkinLyric *lyric, const gchar *filename)
+parse_lyric_file_without_check(LmplayerLyricWidget *lyric, const gchar *filename)
 {
 	gchar buf[1024];
 	gchar *pbuf;
 	gint n;
 	gboolean flag = FALSE;
-	SkinLyricPrivate *priv = lyric->priv;
+	LmplayerLyricWidgetPrivate *priv = lyric->priv;
 
 	FILE* fp = fopen(filename, "r");
 
@@ -543,9 +543,9 @@ parse_lyric_file_without_check(SkinLyric *lyric, const gchar *filename)
 
 
 gboolean
-skin_lyric_add_file(SkinLyric *lyric, const gchar *file)
+lmplayer_lyric_widget_add_file(LmplayerLyricWidget *lyric, const gchar *file)
 {
-	g_return_val_if_fail(SKIN_IS_LYRIC(lyric), FALSE);
+	g_return_val_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric), FALSE);
 	g_return_val_if_fail(file != NULL, FALSE);
 
 	if(g_access(file, R_OK) != 0) return FALSE;
@@ -574,16 +574,16 @@ skin_lyric_add_file(SkinLyric *lyric, const gchar *file)
 }
 
 void 
-skin_lyric_set_current_second(SkinLyric *lyric, gint sec)
+lmplayer_lyric_widget_set_current_second(LmplayerLyricWidget *lyric, gint sec)
 {
 	gint w, h;
 	gint n;
 	gboolean find = FALSE;
 	GList *iter = NULL;
 	LyricLine *line = NULL;
-	SkinLyricPrivate *priv = NULL;
+	LmplayerLyricWidgetPrivate *priv = NULL;
 
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 	g_return_if_fail(sec >= 0);
 
 
@@ -648,9 +648,9 @@ skin_lyric_set_current_second(SkinLyric *lyric, gint sec)
 }
 
 void 
-skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color)
+lmplayer_lyric_widget_set_bg_color(LmplayerLyricWidget *lyric, const GdkColor *color)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 	g_return_if_fail(color != NULL);
 	
 	lyric->priv->bg.red = color->red;
@@ -663,9 +663,9 @@ skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color)
 }
 
 void 
-skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color)
+lmplayer_lyric_widget_set_text_color(LmplayerLyricWidget *lyric, const GdkColor *color)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 	g_return_if_fail(color != NULL);
 	
 	lyric->priv->fg.red = color->red;
@@ -678,9 +678,9 @@ skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color)
 }
 
 void 
-skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color)
+lmplayer_lyric_widget_set_highlight_color(LmplayerLyricWidget *lyric, const GdkColor *color)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 	g_return_if_fail(color != NULL);
 	
 	lyric->priv->current.red = color->red;
@@ -693,11 +693,11 @@ skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color)
 }
 
 void
-skin_lyric_set_color(SkinLyric *lyric, const GdkColor *bg,
+lmplayer_lyric_widget_set_color(LmplayerLyricWidget *lyric, const GdkColor *bg,
 									   const GdkColor *text,
 									   const GdkColor *hilight)
 {
-	g_return_if_fail(SKIN_IS_LYRIC(lyric));
+	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 
 	if(bg)
 	{

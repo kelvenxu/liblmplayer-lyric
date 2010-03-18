@@ -32,11 +32,11 @@
 #define TICKS 200 //ms
 
 static gboolean
-timer_cb(SkinLyric *lyric_widget)
+timer_cb(LmplayerLyricWidget *lyric_widget)
 {
 	static int i = 0;
 
-	skin_lyric_set_current_second(lyric_widget, i * TICKS / 1000);
+	lmplayer_lyric_widget_set_current_second(lyric_widget, i * TICKS / 1000);
 
 	++i;
 	return TRUE;
@@ -47,26 +47,26 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	GtkWidget *lyric_widget = (GtkWidget *)skin_lyric_new();
+	GtkWidget *lyric_widget = lmplayer_lyric_widget_new();
 
-	skin_lyric_set_size(lyric_widget, 300, 500);
+	lmplayer_lyric_widget_set_size(LMPLAYER_LYRIC_WIDGET(lyric_widget), 300, 500);
 	gtk_widget_show(lyric_widget);
 
 	GtkStyle *style = gtk_widget_get_style(win);
 	
-	skin_lyric_set_bg_color(lyric_widget, &(style->bg[0]));
-	skin_lyric_set_text_color(lyric_widget, &(style->fg[0]));
+	lmplayer_lyric_widget_set_bg_color(LMPLAYER_LYRIC_WIDGET(lyric_widget), &(style->bg[0]));
+	lmplayer_lyric_widget_set_text_color(LMPLAYER_LYRIC_WIDGET(lyric_widget), &(style->fg[0]));
 
 	GdkColor light;
 	light.red = 65535;
 	light.green = 0;
 	light.blue = 0;
-	//skin_lyric_set_highlight_color(lyric_widget, &(style->light[1]));
-	skin_lyric_set_highlight_color(lyric_widget, &light);
+	//lmplayer_lyric_widget_set_highlight_color(lyric_widget, &(style->light[1]));
+	lmplayer_lyric_widget_set_highlight_color(LMPLAYER_LYRIC_WIDGET(lyric_widget), &light);
 
 	gtk_container_add(GTK_CONTAINER(win), lyric_widget);
 
-	skin_lyric_add_file(lyric_widget, "test.lrc");
+	lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test.lrc");
 	g_timeout_add(200, (GSourceFunc)timer_cb, lyric_widget);
 
 	gtk_widget_show_all(win);

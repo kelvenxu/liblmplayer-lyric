@@ -29,42 +29,40 @@
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
-#define SKIN_TYPE_LYRIC (skin_lyric_get_type ())
-#define SKIN_LYRIC(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), SKIN_TYPE_LYRIC, SkinLyric))
-#define SKIN_LYRIC_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), SKIN_TYPE_LYRIC, SkinLyricClass))
-#define SKIN_IS_LYRIC(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), SKIN_TYPE_LYRIC))
-#define SKIN_IS_LYRIC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), SKIN_TYPE_LYRIC))
-#define SKIN_LYRIC_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), SKIN_TYPE_LYRIC, SkinLyricClass))
+#define LMPLAYER_TYPE_LYRIC_WIDGET (lmplayer_lyric_widget_get_type())
+#define LMPLAYER_LYRIC_WIDGET(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), LMPLAYER_TYPE_LYRIC_WIDGET, LmplayerLyricWidget))
+#define LMPLAYER_LYRIC_WIDGET_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), LMPLAYER_TYPE_LYRIC_WIDGET, LmplayerLyricWidgetClass))
+#define LMPLAYER_IS_LYRIC_WIDGET(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), LMPLAYER_TYPE_LYRIC_WIDGET))
+#define LMPLAYER_IS_LYRIC_WIDGET_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), LMPLAYER_TYPE_LYRIC_WIDGET))
+#define LMPLAYER_LYRIC_WIDGET_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), LMPLAYER_TYPE_LYRIC_WIDGET, LmplayerLyricWidgetClass))
 
-typedef struct _SkinLyricPrivate SkinLyricPrivate;
+typedef struct _LmplayerLyricWidgetPrivate LmplayerLyricWidgetPrivate;
 
 typedef struct 
 { 
 	GtkLayout parent;
 
-	SkinLyricPrivate *priv;
-} SkinLyric;
+	LmplayerLyricWidgetPrivate *priv;
+} LmplayerLyricWidget;
 
 typedef struct
 {
 	GtkLayoutClass parent;
-} SkinLyricClass;
+} LmplayerLyricWidgetClass;
 
-GType skin_lyric_get_type();
+GType lmplayer_lyric_widget_get_type();
 
-SkinLyric *skin_lyric_new();
+GtkWidget *lmplayer_lyric_widget_new();
 
-void skin_lyric_get_size(SkinLyric *lyric, gint *width, gint *height);
-void skin_lyric_set_size(SkinLyric *lyric, gint width, gint height);
-gboolean skin_lyric_add_file(SkinLyric *lyric, const gchar *file);
-void skin_lyric_set_current_second(SkinLyric *lyric, gint sec);
-void skin_lyric_set_bg_color(SkinLyric *lyric, const GdkColor *color);
-void skin_lyric_set_text_color(SkinLyric *lyric, const GdkColor *color);
-void skin_lyric_set_highlight_color(SkinLyric *lyric, const GdkColor *color);
+void lmplayer_lyric_widget_get_size(LmplayerLyricWidget *lyric, gint *width, gint *height);
+void lmplayer_lyric_widget_set_size(LmplayerLyricWidget *lyric, gint width, gint height);
+gboolean lmplayer_lyric_widget_add_file(LmplayerLyricWidget *lyric, const gchar *file);
+void lmplayer_lyric_widget_set_current_second(LmplayerLyricWidget *lyric, gint sec);
+void lmplayer_lyric_widget_set_bg_color(LmplayerLyricWidget *lyric, const GdkColor *color);
+void lmplayer_lyric_widget_set_text_color(LmplayerLyricWidget *lyric, const GdkColor *color);
+void lmplayer_lyric_widget_set_highlight_color(LmplayerLyricWidget *lyric, const GdkColor *color);
 
-void skin_lyric_set_color(SkinLyric *lyric, const GdkColor *bg,
-										   const GdkColor *text,
-										   const GdkColor *hilight);
+void lmplayer_lyric_widget_set_color(LmplayerLyricWidget *lyric, const GdkColor *bg, const GdkColor *text, const GdkColor *hilight);
 
 G_END_DECLS
 #endif /*__SKINLYRIC_H__ */
