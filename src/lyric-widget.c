@@ -65,6 +65,7 @@ struct _LmplayerLyricWidgetPrivate
 
 	gint da_width;
 	gint da_height;
+	gboolean da_size_changed;
 
 	gint width;
 	gint height;
@@ -148,6 +149,7 @@ lmplayer_lyric_widget_init (LmplayerLyricWidget *self)
 	priv->changed = FALSE;
 
 	priv->current_second = -1;
+	priv->da_size_changed = FALSE;
 }
 
 static void
@@ -177,12 +179,12 @@ update_pixmap(LmplayerLyricWidget *lyric)
 	if(priv->lines == NULL)
 		return;
 
-	gint real_width;
-	gint real_height;
-	gdk_drawable_get_size(priv->da->window, 
-			&real_width, &real_height);
+	//gint real_width = priv->da_width;
+	//gint real_height = priv->da_height;
+	//gdk_drawable_get_size(priv->da->window, &real_width, &real_height);
 
-	if(!(priv->changed) && (real_width == priv->da_width && real_height == priv->da_height))
+	//if(!(priv->changed) || (real_width == priv->da_width && real_height == priv->da_height))
+	if(!priv->changed && !priv->da_size_changed)
 	{
 		g_print("no changed\n");
 		return;
@@ -279,7 +281,9 @@ da_expose_cb(GtkWidget *widget, GdkEventExpose *event, LmplayerLyricWidget *lyri
 static gboolean
 da_configure_cb(GtkWidget *widget, GdkEventExpose *event, LmplayerLyricWidget *lyric)
 {
-	g_print("da configure cb\n");
+	GtkAllocation allocation;
+	gtk_widget_get_allocation(widget, &allocation);
+	g_print("da configure cbw: %d h: %d\n", allocation.width, allocation.height);
 	update_pixmap(lyric);
 	g_print("da configure cb done\n");
 }
@@ -328,13 +332,17 @@ lmplayer_lyric_widget_set_size(LmplayerLyricWidget *lyric, gint width, gint heig
 {
 	g_return_if_fail(LMPLAYER_IS_LYRIC_WIDGET(lyric));
 
-	gtk_widget_set_size_request(GTK_WIDGET(lyric), width, height);
-	gtk_widget_set_size_request(lyric->priv->da, width, height);
+	if(lyric->priv->da_width != width || lyric->priv->da_height != height)
+	{
+		gtk_widget_set_size_request(GTK_WIDGET(lyric), width, height);
+		gtk_widget_set_size_request(lyric->priv->da, width, height);
 
-	lyric->priv->da_width = width;
-	lyric->priv->da_height = height;
+		lyric->priv->da_width = width;
+		lyric->priv->da_height = height;
 
-	update_pixmap(lyric);
+		lyric->priv->da_size_changed = TRUE;
+		update_pixmap(lyric);
+	}
 }
 
 //NOTE: str: [mm:ss.ss

@@ -2,7 +2,7 @@
 # Run this to generate all the initial makefiles, etc.
 
 #name of package
-test "$PKG_NAME" || PKG_NAME=libisoline
+test "$PKG_NAME" || PKG_NAME=liblmplayer-lyric
 test "$srcdir" || srcdir=.
 
 # default version requirements ...
