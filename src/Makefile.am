@@ -4,7 +4,6 @@ noinst_PROGRAMS = test-downloader test-dialog test-widget
 lib_LTLIBRARIES = liblmplayer-lyric.la
 
 headers = \
-	lyric-downloader.h\
 	http_error_codes.h\
 	http_fetcher.h\
 	lmp_debug.h\
