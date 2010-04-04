@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lyric-widget.h"
+#include "lyric-widget-da.h"
+#include "lyric-widget-text.h"
 
 #define TICKS 200 //ms
 
@@ -47,7 +49,10 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	GtkWidget *lyric_widget = lmplayer_lyric_widget_new();
+	//GtkWidget *lyric_widget = g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET_DA, NULL);//lmplayer_lyric_widget_new();
+	//GtkWidget *lyric_widget = lmplayer_lyric_widget_da_new();
+	//GtkWidget *lyric_widget = g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET_TEXT, NULL);//lmplayer_lyric_widget_new();
+	GtkWidget *lyric_widget = lmplayer_lyric_widget_text_new();
 
 	lmplayer_lyric_widget_set_size(LMPLAYER_LYRIC_WIDGET(lyric_widget), 300, 500);
 	gtk_widget_show(lyric_widget);
@@ -69,6 +74,7 @@ int main(int argc, char *argv[])
 	lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test.lrc");
 	g_timeout_add(200, (GSourceFunc)timer_cb, lyric_widget);
 
+	g_signal_connect(win, "destroy", gtk_main_quit, NULL);
 	gtk_widget_show_all(win);
 
 	gtk_main();

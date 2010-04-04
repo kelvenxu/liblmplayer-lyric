@@ -7,8 +7,11 @@ headers = \
 	http_error_codes.h\
 	http_fetcher.h\
 	lmp_debug.h\
+	lyric-loader.h\
 	lyric-downloader.h\
 	lyric-widget.h\
+	lyric-widget-text.h\
+	lyric-widget-da.h\
 	lyric-selection-dialog.h\
 	tt_codefunc.h\
 	tt_lyric.h
@@ -17,8 +20,11 @@ sources = \
 	http_error_codes.c\
 	http_fetcher.c\
 	lmp_debug.c\
+	lyric-loader.c \
 	lyric-downloader.c\
 	lyric-widget.c\
+	lyric-widget-text.c\
+	lyric-widget-da.c\
 	lyric-selection-dialog.c\
 	tt_codefunc.c\
 	tt_lyric.c
