@@ -169,12 +169,9 @@ lmplayer_lyric_widget_text_set_current_second(LmplayerLyricWidget *self, gint se
 	if(priv->current_sec == sec)
 		return;
 
-	g_print("sec: %d\n", sec);
 	for(iter = lines; iter; iter = iter->next)
 	{
 		line = iter->data;
-		g_print("line sec: %d\n", line->sec);
-		g_print("line nth: %d\n", line->nth);
 		if(line && line->sec == sec)
 		{
 			line_no = line->nth;
@@ -196,19 +193,13 @@ lmplayer_lyric_widget_text_set_current_second(LmplayerLyricWidget *self, gint se
 	
 	if(priv->current_line >= 0)
 	{
-		g_print("normal it %d\n", priv->current_line);
 		gtk_text_buffer_get_iter_at_line(priv->text_buffer, &start, priv->current_line);
 		gtk_text_buffer_get_iter_at_line(priv->text_buffer, &end, priv->current_line + 1);
 		gtk_text_buffer_apply_tag_by_name(priv->text_buffer, "normal", &start, &end);
 	}
 
-	//priv->current_line ++;
 	if(line_no >= 0)
 	{
-		//gtk_text_buffer_get_iter_at_line(priv->text_buffer, &start, priv->current_line);
-		//gtk_text_buffer_get_iter_at_line(priv->text_buffer, &end, priv->current_line + 1);
-		//gtk_text_buffer_apply_tag_by_name(priv->text_buffer, "normal", &start, &end);
-		g_print("high light it %d\n", line_no);
 		gtk_text_buffer_get_iter_at_line(priv->text_buffer, &start, line_no);
 		gtk_text_buffer_get_iter_at_line(priv->text_buffer, &end, line_no + 1);
 		gtk_text_buffer_apply_tag_by_name(priv->text_buffer, "current", &start, &end);
