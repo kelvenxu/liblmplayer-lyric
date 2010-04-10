@@ -40,7 +40,8 @@ struct _LmplayerLyricSelectionDialogPrivate
 	GtkWidget *first_btn;
 
 	GList *btn_list;
-	gint id;
+	//gint id;
+	gint index;
 
 	GSList *lyrics_list;
 };
@@ -76,7 +77,7 @@ lmplayer_lyric_selection_dialog_init(LmplayerLyricSelectionDialog *self)
 	priv->first_btn = NULL;
 
 	priv->btn_list = NULL;
-	priv->id = 0;
+	priv->index = 0;
 
 	priv->lyrics_list = NULL;
 }
@@ -127,7 +128,6 @@ lmplayer_lyric_selection_dialog_construct(LmplayerLyricSelectionDialog *dlg)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox1, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(root_vbox), vbox, FALSE, FALSE, 6);
  
-	//g_signal_connect(dlg, "response", G_CALLBACK(dialog_response_cb), NULL);
 	g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 }
 
@@ -161,9 +161,7 @@ radio_button_toggled_cb(GtkToggleButton *button, LmplayerLyricSelectionDialog *d
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
-	priv->id = g_list_index(priv->btn_list, button);
-	
-	g_print("selected id: %d\n", priv->id);
+	priv->index = g_list_index(priv->btn_list, button);
 }
 
 static void
@@ -175,7 +173,6 @@ create_radio_button_and_pack(TTLyric *lyric, LmplayerLyricSelectionDialog *dlg)
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
-	g_print("create and pack\n");
 	GtkWidget *btn = NULL;
 	if(priv->first_btn)
 	{
@@ -190,10 +187,7 @@ create_radio_button_and_pack(TTLyric *lyric, LmplayerLyricSelectionDialog *dlg)
 	gtk_box_pack_start(GTK_BOX(priv->widget), btn, FALSE, FALSE, 6);
 	g_signal_connect(btn, "toggled", G_CALLBACK(radio_button_toggled_cb), dlg);
 
-
-	g_print("create and pack 1\n");
 	priv->btn_list = g_list_append(priv->btn_list, btn);
-	g_print("create and pack end\n");
 }
 
 /*
@@ -208,13 +202,12 @@ lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSLi
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
-	g_print("set list start\n");
 	if(GTK_IS_WIDGET(priv->widget))
 	{
 		gtk_widget_destroy(priv->widget);
 		priv->widget = NULL;
 		priv->first_btn = NULL;
-		priv->id = 0;
+		priv->index = 0;
 	}
 
 	if(priv->btn_list)
@@ -223,19 +216,16 @@ lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSLi
 		priv->btn_list = NULL;
 	}
 
-	g_print("widget new\n");
 	priv->widget = gtk_vbox_new(FALSE, 6);
 
 	priv->lyrics_list = list;
 
 	g_slist_foreach(list, (GFunc)create_radio_button_and_pack, dlg);
 	gtk_box_pack_start(GTK_BOX(priv->container), priv->widget, FALSE, FALSE, 6);
-
-	g_print("set list end\n");
 }
 
 gint
-lmplayer_lyric_selection_dialog_get_selected_id(LmplayerLyricSelectionDialog *dlg)
+lmplayer_lyric_selection_dialog_get_selected_index(LmplayerLyricSelectionDialog *dlg)
 {
 	LmplayerLyricSelectionDialogPrivate *priv;
 
@@ -243,11 +233,6 @@ lmplayer_lyric_selection_dialog_get_selected_id(LmplayerLyricSelectionDialog *dl
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
-	const TTLyric *lyric = (TTLyric *)g_slist_nth_data(priv->lyrics_list, priv->id);
-
-	if(lyric)
-		return atoi(lyric->id);
-	else
-		return -1;
+	return priv->index;
 }
 

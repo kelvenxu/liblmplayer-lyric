@@ -43,6 +43,10 @@ struct _LmplayerLyricDownloaderTTPrivate
 	gchar *artist;
 	gchar *title;
 	gchar *filename;
+
+	GSList *list;
+
+	gint index; // 指示list中被选中的节点
 };
 
 static void tt_lyric_download(LmplayerLyricDownloaderTT *downloader, const char *title, const char *artist, const char *output);
@@ -138,65 +142,44 @@ tt_lyric_download_func(LmplayerLyricDownloaderTT *downloader)
 
 	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
 
-	g_print("download: %d. %s %s\n", priv->id, priv->artist, priv->title);
-	ret = tt_get_lyrics_content_and_save(priv->id, priv->artist, priv->title, priv->filename);
+	TTLyric *lyric = (TTLyric *)g_slist_nth_data(priv->list, priv->index);
+	ret = tt_get_lyrics_content_and_save(atoi(lyric->id), lyric->artist, lyric->title, priv->filename);
 	if(ret)
 	{
-		g_print("emit signal\n");
 		// emit signal
 		g_signal_emit_by_name(downloader, "download_finished", NULL);
-		g_print("emit signal done\n");
 	}
 }
 
 static void
 tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 {
-#if 0
-	GtkWidget *dialog = gtk_message_dialog_new (NULL,
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE,
-			"thread dialog",
-			NULL);
-	gtk_dialog_run (GTK_DIALOG (dialog));
-#endif
-
-	GSList *list = NULL;
 	LmplayerLyricDownloaderTTPrivate *priv;
 
 	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
 
-	g_print("download: %s - %s\n", priv->artist, priv->title);
-
 	gchar *xml = tt_get_lyrics_list(priv->artist, priv->title);
 	if(!xml)
 	{
-		g_print("xml is NULL\n");
 		return;
 	}
 
-	g_print("xml: %s\n", xml);
-	list = tt_parse_lyricslist(xml);
-	if(!list)
+	priv->list = tt_parse_lyricslist(xml);
+	if(!priv->list)
 	{
-		g_print("list is NULL\n");
 		return;
 	}
 
-	if(g_slist_length(list) > 1)
+	if(g_slist_length(priv->list) > 1)
 	{
-		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), list);
-
-		g_print("show it\n");
+		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), priv->list);
 		gtk_widget_show_all(priv->dlg);
 
-		g_print("show !\n");
 		return;
 	}
 
-	TTLyric *lyric = (TTLyric *)list->data;
-	priv->id = atoi(lyric->id);
+	TTLyric *lyric = (TTLyric *)priv->list->data;
+	priv->index = atoi(lyric->id);
 
 	tt_lyric_download_func(downloader);
 }
@@ -210,10 +193,7 @@ dialog_response_cb(GtkDialog *dialog, gint response_id, LmplayerLyricDownloader 
 
 	if(response_id == GTK_RESPONSE_ACCEPT)
 	{
-		g_print("responsed\n");
-		priv->id = lmplayer_lyric_selection_dialog_get_selected_id(LMPLAYER_LYRIC_SELECTION_DIALOG(dialog));
-		
-		g_print("id: %d\n", priv->id);
+		priv->index = lmplayer_lyric_selection_dialog_get_selected_index(LMPLAYER_LYRIC_SELECTION_DIALOG(dialog));
 		g_thread_create((GThreadFunc)tt_lyric_download_func, downloader, FALSE, NULL);
 	}
 

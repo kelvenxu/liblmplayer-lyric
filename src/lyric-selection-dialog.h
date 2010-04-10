@@ -55,8 +55,8 @@ GType lmplayer_lyric_selection_dialog_get_type();
 
 GtkWidget *lmplayer_lyric_selection_dialog_new();
 void lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSList *list);
-gint lmplayer_lyric_selection_dialog_get_selected_id(LmplayerLyricSelectionDialog *dlg);
-
+//gint lmplayer_lyric_selection_dialog_get_selected_id(LmplayerLyricSelectionDialog *dlg);
+gint lmplayer_lyric_selection_dialog_get_selected_index(LmplayerLyricSelectionDialog *dlg);
 
 G_END_DECLS
 #endif /*__LYRIC_SELECTION_DIALOG_H__ */
