@@ -39,7 +39,8 @@ struct _LmplayerLyricDownloaderTTPrivate
 {
 	GtkWidget *dlg;
 
-	guint id;
+	gboolean dlg_showing; // 指示dlg是否弹出
+
 	gchar *artist;
 	gchar *title;
 	gchar *filename;
@@ -77,10 +78,10 @@ lmplayer_lyric_downloader_tt_init (LmplayerLyricDownloaderTT *self)
 
 	g_signal_connect(priv->dlg, "response", G_CALLBACK(dialog_response_cb), self);
 
-	priv->id = 0;
 	priv->artist = NULL;
 	priv->title = NULL;
 	priv->filename = NULL;
+	priv->dlg_showing = FALSE;
 }
 
 static void
@@ -181,11 +182,18 @@ tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 	{
 		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), priv->list);
 		gtk_widget_show_all(priv->dlg);
+		priv->dlg_showing = TRUE;
 
 		return;
 	}
 	else
 	{
+		if(priv->dlg_showing)
+		{
+			gtk_widget_hide(priv->dlg);
+			priv->dlg_showing = FALSE;
+		}
+
 		priv->index = 0;
 		tt_lyric_download_func(downloader);
 	}
@@ -204,6 +212,7 @@ dialog_response_cb(GtkDialog *dialog, gint response_id, LmplayerLyricDownloader 
 		g_thread_create((GThreadFunc)tt_lyric_download_func, downloader, FALSE, NULL);
 	}
 
+	priv->dlg_showing = FALSE;
 	gtk_widget_hide(GTK_WIDGET(dialog));
 }
 
