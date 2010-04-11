@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	LmplayerLyricDownloader *lyric_downloader = g_object_new(LMPLAYER_TYPE_LYRIC_DOWNLOADER_TT, NULL);
 
 	g_signal_connect(lyric_downloader, "download_finished", G_CALLBACK(download_finished_cb), NULL);
-	g_timeout_add_seconds(5, timer_cb, lyric_downloader);
+	g_timeout_add_seconds(5, (GSourceFunc)timer_cb, lyric_downloader);
 
 	gtk_widget_show_all(win);
 

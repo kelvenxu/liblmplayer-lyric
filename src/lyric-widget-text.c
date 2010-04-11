@@ -26,6 +26,7 @@
 #include "lyric-widget.h"
 #include "lyric-loader.h"
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 static void lmplayer_lyric_widget_interface_init(LmplayerLyricWidgetInterface *iface);
 
@@ -73,12 +74,14 @@ lmplayer_lyric_widget_text_init (LmplayerLyricWidgetText *self)
 	gtk_text_buffer_create_tag(priv->text_buffer, "center", 
 			"justification",GTK_JUSTIFY_CENTER, 
 			NULL);
+
 	gtk_text_buffer_create_tag(priv->text_buffer, "current", 
 			"scale", PANGO_SCALE_LARGE,
 			"scale-set", TRUE,
 			"foreground", "blue", 
 			"weight", PANGO_WEIGHT_BOLD,
 			NULL);
+
 	gtk_text_buffer_create_tag(priv->text_buffer, "normal", 
 			"scale", PANGO_SCALE_SMALL,
 			"scale-set", TRUE,
@@ -100,6 +103,44 @@ lmplayer_lyric_widget_text_class_init (LmplayerLyricWidgetTextClass *self_class)
 	g_type_class_add_private (self_class, sizeof (LmplayerLyricWidgetTextPrivate));
 	object_class->dispose = (void (*) (GObject *object)) lmplayer_lyric_widget_text_dispose;
 	object_class->finalize = (void (*) (GObject *object)) lmplayer_lyric_widget_text_finalize;
+}
+
+static void
+lmplayer_lyric_widget_text_clear(LmplayerLyricWidget *self)
+{
+	GtkTextIter start;
+	GtkTextIter end;
+
+	g_return_if_fail(self);
+	LmplayerLyricWidgetTextPrivate *priv = LMPLAYER_LYRIC_WIDGET_TEXT_GET_PRIVATE(self);
+
+	if(priv)
+	{
+		gtk_text_buffer_get_bounds(priv->text_buffer, &start, &end);
+		gtk_text_buffer_delete(priv->text_buffer, &start, &end);
+	}
+}
+
+static void
+lmplayer_lyric_widget_text_failed_tips(LmplayerLyricWidget *self)
+{
+	GtkTextIter start;
+
+	g_return_if_fail(self);
+	LmplayerLyricWidgetTextPrivate *priv = LMPLAYER_LYRIC_WIDGET_TEXT_GET_PRIVATE(self);
+
+	if(priv)
+	{
+		lmplayer_lyric_widget_text_clear(self);
+
+		gtk_text_buffer_get_start_iter(priv->text_buffer, &start);
+		gtk_text_buffer_insert_with_tags_by_name(priv->text_buffer, &start, 
+				_("Not found lyric, try to download from internet ..."),
+				-1,
+				"normal",
+				"center",
+				NULL);
+	}
 }
 
 static void
@@ -147,7 +188,12 @@ lmplayer_lyric_widget_text_add_file(LmplayerLyricWidget *self, const gchar *file
 
 	if(ret)
 	{
+		lmplayer_lyric_widget_text_clear(self);
 		lmplayer_lyric_widget_text_prepare(self);
+	}
+	else
+	{
+		lmplayer_lyric_widget_text_failed_tips(self);
 	}
 
 	return ret;
@@ -246,8 +292,9 @@ lmplayer_lyric_widget_text_new()
 {
 	return g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET_TEXT, 
 			"hadjustment", NULL, 
-			"hscrollbar-policy", GTK_POLICY_AUTOMATIC,
 			"vadjustment", NULL,
+			"hscrollbar-policy", GTK_POLICY_AUTOMATIC,
 			"vscrollbar-policy", GTK_POLICY_AUTOMATIC,
 			NULL);
 }
+

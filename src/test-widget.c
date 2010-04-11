@@ -31,16 +31,37 @@
 #include "lyric-widget-da.h"
 #include "lyric-widget-text.h"
 
-#define TICKS 200 //ms
+#define TICKS 1000 //ms
 
 static gboolean
 timer_cb(LmplayerLyricWidget *lyric_widget)
 {
 	static int i = 0;
+	static int f = 1;
 
 	lmplayer_lyric_widget_set_current_second(lyric_widget, i * TICKS / 1000);
 
 	++i;
+
+	if(i > 30)
+	{
+		if(f % 3 == 1)
+		{
+			lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test1.lrc");
+		}
+		else if( f % 3 == 2)
+		{
+			lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test2.lrc");
+		}
+		else
+		{
+			lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test.lrc");
+		}
+
+		i = 0;
+		++f;
+	}
+
 	return TRUE;
 }
 
@@ -49,9 +70,8 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	//GtkWidget *lyric_widget = g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET_DA, NULL);//lmplayer_lyric_widget_new();
+
 	//GtkWidget *lyric_widget = lmplayer_lyric_widget_da_new();
-	//GtkWidget *lyric_widget = g_object_new(LMPLAYER_TYPE_LYRIC_WIDGET_TEXT, NULL);//lmplayer_lyric_widget_new();
 	GtkWidget *lyric_widget = lmplayer_lyric_widget_text_new();
 
 	lmplayer_lyric_widget_set_size(LMPLAYER_LYRIC_WIDGET(lyric_widget), 300, 500);
@@ -72,7 +92,7 @@ int main(int argc, char *argv[])
 	gtk_container_add(GTK_CONTAINER(win), lyric_widget);
 
 	lmplayer_lyric_widget_add_file(LMPLAYER_LYRIC_WIDGET(lyric_widget), "test.lrc");
-	g_timeout_add(200, (GSourceFunc)timer_cb, lyric_widget);
+	g_timeout_add(TICKS, (GSourceFunc)timer_cb, lyric_widget);
 
 	g_signal_connect(win, "destroy", gtk_main_quit, NULL);
 	gtk_widget_show_all(win);
@@ -80,3 +100,4 @@ int main(int argc, char *argv[])
 	gtk_main();
 	return 0;
 }
+
