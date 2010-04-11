@@ -1,0 +1,3 @@
+	../src/lyric-selection-dialog.c \
+	../src/lyric-widget-text.c \
+	../src/tt_lyric.c
