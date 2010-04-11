@@ -143,11 +143,17 @@ tt_lyric_download_func(LmplayerLyricDownloaderTT *downloader)
 	priv = LMPLAYER_LYRIC_DOWNLOADER_TT_GET_PRIVATE(downloader);
 
 	TTLyric *lyric = (TTLyric *)g_slist_nth_data(priv->list, priv->index);
-	ret = tt_get_lyrics_content_and_save(atoi(lyric->id), lyric->artist, lyric->title, priv->filename);
-	if(ret)
+
+	if(lyric)
 	{
-		// emit signal
-		g_signal_emit_by_name(downloader, "download_finished", NULL);
+		ret = tt_get_lyrics_content_and_save(atoi(lyric->id), 
+																				lyric->artist, 
+																				lyric->title, 
+																				priv->filename);
+		if(ret)
+		{
+			g_signal_emit_by_name(downloader, "download_finished", NULL);
+		}
 	}
 }
 
@@ -170,6 +176,7 @@ tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 		return;
 	}
 
+	// 多于一个时，要选择
 	if(g_slist_length(priv->list) > 1)
 	{
 		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), priv->list);
@@ -177,11 +184,11 @@ tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 
 		return;
 	}
-
-	TTLyric *lyric = (TTLyric *)priv->list->data;
-	priv->index = atoi(lyric->id);
-
-	tt_lyric_download_func(downloader);
+	else
+	{
+		priv->index = 0;
+		tt_lyric_download_func(downloader);
+	}
 }
 
 static void
