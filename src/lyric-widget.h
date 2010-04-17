@@ -38,7 +38,7 @@ G_BEGIN_DECLS
 typedef struct _LmplayerLyricWidget LmplayerLyricWidget; /* dummy object */
 typedef struct _LmplayerLyricWidgetInterface      LmplayerLyricWidgetInterface;
 
-typedef struct _LmplayerLyricWidgetInterface
+struct _LmplayerLyricWidgetInterface
 {
 	GTypeInterface parent_iface;
 

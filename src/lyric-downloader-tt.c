@@ -183,7 +183,6 @@ tt_lyric_get_list_func(LmplayerLyricDownloaderTT *downloader)
 		lmplayer_lyric_selection_dialog_set_list(LMPLAYER_LYRIC_SELECTION_DIALOG(priv->dlg), priv->list);
 		gtk_widget_show_all(priv->dlg);
 		priv->dlg_showing = TRUE;
-
 		return;
 	}
 	else

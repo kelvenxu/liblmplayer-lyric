@@ -187,6 +187,7 @@ create_radio_button_and_pack(TTLyric *lyric, LmplayerLyricSelectionDialog *dlg)
 	gtk_box_pack_start(GTK_BOX(priv->widget), btn, FALSE, FALSE, 6);
 	g_signal_connect(btn, "toggled", G_CALLBACK(radio_button_toggled_cb), dlg);
 
+	gtk_widget_show(btn);
 	priv->btn_list = g_list_append(priv->btn_list, btn);
 }
 
@@ -202,22 +203,22 @@ lmplayer_lyric_selection_dialog_set_list(LmplayerLyricSelectionDialog *dlg, GSLi
 
 	priv = LMPLAYER_LYRIC_SELECTION_DIALOG_GET_PRIVATE(dlg);
 
+	if(priv->btn_list)
+	{
+		g_list_foreach(priv->btn_list, gtk_widget_destroy, NULL);
+		g_list_free(priv->btn_list);
+		priv->btn_list = NULL;
+		priv->first_btn = NULL;
+	}
+
 	if(GTK_IS_WIDGET(priv->widget))
 	{
 		gtk_widget_destroy(priv->widget);
 		priv->widget = NULL;
-		priv->first_btn = NULL;
 		priv->index = 0;
 	}
 
-	if(priv->btn_list)
-	{
-		g_list_free(priv->btn_list);
-		priv->btn_list = NULL;
-	}
-
 	priv->widget = gtk_vbox_new(FALSE, 6);
-
 	priv->lyrics_list = list;
 
 	g_slist_foreach(list, (GFunc)create_radio_button_and_pack, dlg);
