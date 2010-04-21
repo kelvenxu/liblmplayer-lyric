@@ -1,0 +1,22 @@
+Source: liblmplayer-lyric
+Priority: extra
+Maintainer: kelvenxu <kelvenxu@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.8.1
+Section: libs
+Homepage: http://www.lmplayer.com/
+
+Package: liblmplayer-lyric-dev
+Section: libdevel
+Architecture: i386
+Depends: liblmplayer-lyric1 (= 0.12.0-1), libgtk2.0-dev (>= 2.10.0), libglib2.0-dev (>= 2.12.0) 
+Description: lmplayer lyric library development package.
+	lmplayer lyric library development package.
+
+
+Package: liblmplayer-lyric1
+Section: libs
+Architecture: i386
+Depends: libgtk2.0-0 (>= 2.10.0), libglib2.0-0 (>= 2.12.0)
+Description: lmplayer lyric library
+	lmplayer lyric library runtime package.

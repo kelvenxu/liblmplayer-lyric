@@ -8,7 +8,7 @@ AC_PREREQ(2.52)
 # 设置binary_age和interface_age为0.
 #
 m4_define(lmplayer_version_major, 0)
-m4_define(lmplayer_version_minor, 10)
+m4_define(lmplayer_version_minor, 12)
 m4_define(lmplayer_version_micro, 0)
 m4_define(liblmplayer_lyric_interface_age, 0)
 
@@ -18,7 +18,7 @@ AC_INIT([liblmplayer-lyric],
 
 AM_CONFIG_HEADER(config.h)
 
-AM_INIT_AUTOMAKE(liblmplayer-lyric, 0.10.0)
+AM_INIT_AUTOMAKE(liblmplayer-lyric, 0.12.0)
 
 AM_MAINTAINER_MODE
 
